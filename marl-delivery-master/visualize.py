@@ -57,35 +57,22 @@ class VisualRenderer:
         # Xóa màn hình
         self.screen.fill(self.colors['background'])
         
-        # Vẽ lưới
+        # Vẽ lưới và nền
         for r in range(env.n_rows):
             for c in range(env.n_cols):
-                # Vẽ đường lưới
-                pygame.draw.rect(
-                    self.screen, 
-                    self.colors['grid_line'], 
-                    (c * self.cell_size, r * self.cell_size, self.cell_size, self.cell_size), 
-                    1
-                )
+                # Vẽ nền trống cho mỗi ô
+                self.screen.blit(self.images['empty'], (c * self.cell_size, r * self.cell_size))
                 
                 # Vẽ chướng ngại vật
                 if env.grid[r][c] == 1:
-                    pygame.draw.rect(
-                        self.screen, 
-                        self.colors['obstacle'], 
-                        (c * self.cell_size, r * self.cell_size, self.cell_size, self.cell_size)
-                    )
+                    self.screen.blit(self.images['obstacle'], (c * self.cell_size, r * self.cell_size))
         
         # Vẽ gói hàng
         for package in env.packages:
             if package.status == 'waiting':
                 # Gói hàng đang chờ
                 r, c = package.start
-                pygame.draw.rect(
-                    self.screen, 
-                    self.colors['package'], 
-                    (c * self.cell_size + 5, r * self.cell_size + 5, self.cell_size - 10, self.cell_size - 10)
-                )
+                self.screen.blit(self.images['package'], (c * self.cell_size, r * self.cell_size))
                 # Hiển thị ID gói hàng
                 text = self.font.render(f'P{package.package_id}', True, (0, 0, 0))
                 self.screen.blit(text, (c * self.cell_size + 10, r * self.cell_size + 10))
@@ -93,11 +80,7 @@ class VisualRenderer:
             elif package.status == 'delivered':
                 # Gói hàng đã giao
                 r, c = package.target
-                pygame.draw.rect(
-                    self.screen, 
-                    self.colors['delivered'], 
-                    (c * self.cell_size + 5, r * self.cell_size + 5, self.cell_size - 10, self.cell_size - 10)
-                )
+                self.screen.blit(self.images['delivered'], (c * self.cell_size, r * self.cell_size))
                 # Hiển thị ID gói hàng
                 text = self.font.render(f'E{package.package_id}', True, (0, 0, 0))
                 self.screen.blit(text, (c * self.cell_size + 10, r * self.cell_size + 10))
@@ -105,17 +88,7 @@ class VisualRenderer:
         # Vẽ robot
         for i, robot in enumerate(env.robots):
             r, c = robot.position
-            
-            # Đổi màu robot nếu đang mang gói hàng (màu vàng)
-            robot_color = (255, 215, 0) if robot.carrying > 0 else self.colors['robot']
-            
-            # Vẽ robot
-            pygame.draw.circle(
-                self.screen,
-                robot_color,
-                (c * self.cell_size + self.cell_size // 2, r * self.cell_size + self.cell_size // 2),
-                self.cell_size // 3
-            )
+            self.screen.blit(self.images['robot'], (c * self.cell_size, r * self.cell_size))
             
             # Hiển thị ID robot
             text = self.font.render(f'R{i}', True, (255, 255, 255))
@@ -125,6 +98,7 @@ class VisualRenderer:
             if robot.carrying > 0:
                 text = self.font.render(f'P{robot.carrying}', True, (0, 0, 0))
                 self.screen.blit(text, (c * self.cell_size + self.cell_size // 2 - 5, r * self.cell_size + self.cell_size // 2 + 5))
+        
         # Hiển thị thông tin thời gian
         time_text = self.font.render(f'Time Step: {env.t}', True, (0, 0, 0))
         self.screen.blit(time_text, (10, 10))

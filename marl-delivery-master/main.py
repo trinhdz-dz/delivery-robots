@@ -27,7 +27,8 @@ if __name__=="__main__":
     if args.visual:
         renderer = VisualRenderer(cell_size=40)
         try:
-            renderer.load_images()
+            renderer.load_images(images_dir='C:/subjects at school/RL/code/finalproject/marl-delivery-master/delivery-robots-1/image')
+            print("Images loaded successfully")
         except:
             print("Warning: Could not load images, using default shapes")
     
@@ -52,7 +53,7 @@ if __name__=="__main__":
         # Hiển thị khung hình hiện tại
         if renderer:
             renderer.render(env)
-            time.sleep(2)  # Delay để người dùng có thể theo dõi
+            time.sleep(0.5)  # Delay để người dùng có thể theo dõi
         else:
             env.render()  # Text-based rendering
         

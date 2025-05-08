@@ -343,16 +343,53 @@ class Environment:
             return False
         return True
 
+    # def render(self):
+    #     """
+    #     A simple text-based rendering of the map showing obstacles and robot positions.
+    #     Obstacles are represented by 1, free cells by 0, and robots by 'R'.
+    #     """
+    #     # Make a deep copy of the grid
+    #     grid_copy = [row[:] for row in self.grid]
+    #     for i, robot in enumerate(self.robots):
+    #         r, c = robot.position
+    #         grid_copy[r][c] = 'R%i'%i
+    #     for row in grid_copy:
+    #         print('\t'.join(str(cell) for cell in row))
+
     def render(self):
         """
-        A simple text-based rendering of the map showing obstacles and robot positions.
-        Obstacles are represented by 1, free cells by 0, and robots by 'R'.
+        A simple text-based rendering of the map showing obstacles, robot positions, and package positions.
+        Obstacles are represented by 1, free cells by 0, robots by 'R', packages by 'P', and delivered packages by 'E'.
+        If a robot is carrying a package, it's represented as 'P{id}R{id}'.
         """
         # Make a deep copy of the grid
         grid_copy = [row[:] for row in self.grid]
+        
+        # First, mark package positions (waiting and delivered)
+        for i, package in enumerate(self.packages):
+            pkg_id = package.package_id
+            
+            # Mark waiting packages at their start positions
+            if package.status == 'waiting':
+                r, c = package.start
+                grid_copy[r][c] = f'P{pkg_id}'
+            
+            # Mark delivered packages at their target positions
+            elif package.status == 'delivered':
+                r, c = package.target
+                grid_copy[r][c] = f'E{pkg_id}'
+        
+        # Then, mark robot positions (they override package markings if on same cell)
         for i, robot in enumerate(self.robots):
             r, c = robot.position
-            grid_copy[r][c] = 'R%i'%i
+            
+            # If robot is carrying a package
+            if robot.carrying > 0:
+                grid_copy[r][c] = f'R{i}P{robot.carrying}'
+            else:
+                grid_copy[r][c] = f'R{i}'
+        
+        # Print the grid
         for row in grid_copy:
             print('\t'.join(str(cell) for cell in row))
         

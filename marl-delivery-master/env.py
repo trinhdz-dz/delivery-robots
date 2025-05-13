@@ -131,9 +131,12 @@ class Environment:
         """
         selected_packages = []
         for i in range(len(self.packages)):
-            if self.packages[i].start_time == self.t:
-                selected_packages.append(self.packages[i])
-                self.packages[i].status = 'waiting'
+            if self.packages[i].start_time <= self.t:
+                if self.packages[i].status == 'None': 
+                    self.packages[i].status = 'waiting'
+                
+                if self.packages[i].status != 'delivered': 
+                    selected_packages.append(self.packages[i])
 
         state = {
             'time_step': self.t,

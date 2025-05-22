@@ -27,7 +27,7 @@ if __name__=="__main__":
     if args.visual:
         renderer = VisualRenderer(cell_size=40)
         try:
-            renderer.load_images(images_dir='C:/subjects at school/RL/code/finalproject/marl-delivery-master/delivery-robots-1/image')
+            renderer.load_images(images_dir='E:/Năm 3 Kỳ II/Học tăng cường/Cuối Kỳ/marl-delivery(new)/delivery-robots/image')
             print("Images loaded successfully")
         except:
             print("Warning: Could not load images, using default shapes")
